@@ -32,6 +32,12 @@ i make this documentation for me or maybe someone this documentation, because nv
 |Shortcut |Function |
 |-----|--------|
 |x| delete character under the cursor |
+|X| delete character before the cursor |
 |dd| delete line |
-|X| delete
+|p| paste after cursor |
+|P| paste at the cursor |
+|"+p| paste from system clipboard after the cursor |
+|"+P| paste from system clipboard at the cursor | 
+
+#### Select and copy
 
