@@ -15,4 +15,10 @@ return {
       vim.cmd.colorscheme("catppuccin-macchiato")
     end,
   },
+  {
+    "LazyVim/LazyVim",
+    opts = {
+      colorscheme = "catppuccin-macchiato",
+    },
+  },
 }
