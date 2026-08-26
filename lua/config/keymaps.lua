@@ -36,3 +36,25 @@ end
 
 vim.keymap.set({ "n", "v" }, "<leader>cp", copy_path_with_line("%:p"), { desc = "Copy Absolute Path:Line" })
 vim.keymap.set({ "n", "v" }, "<leader>cP", copy_path_with_line("%:."), { desc = "Copy Relative Path:Line" })
+
+vim.api.nvim_create_user_command("LspRestart", function()
+  local clients = vim.lsp.get_clients({ bufnr = 0 })
+  if #clients == 0 then
+    vim.notify("No active LSP clients attached to buffer", vim.log.levels.WARN)
+    return
+  end
+
+  local names = {}
+  for _, client in ipairs(clients) do
+    table.insert(names, client.name)
+    vim.lsp.stop_client(client.id, true)
+  end
+
+  vim.notify("Restarting LSP: " .. table.concat(names, ", "), vim.log.levels.INFO)
+
+  vim.defer_fn(function()
+    vim.cmd("edit")
+  end, 300)
+end, { desc = "Restart LSP clients attached to current buffer" })
+
+vim.keymap.set("n", "<leader>cL", "<cmd>LspRestart<cr>", { desc = "Restart LSP" })
