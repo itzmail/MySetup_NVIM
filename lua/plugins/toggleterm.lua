@@ -1,3 +1,23 @@
+-- Floating sub-apps (lazygit / lazydocker) as named toggleterm terminals.
+-- hidden = true: not part of the numbered toggle-term list; toggle-able anytime.
+local function toggle_subapp(id, cmd, name)
+  local M = require("toggleterm.terminal")
+  local term = M.get(id, true)
+  if not term then
+    term = M.Terminal:new({
+      cmd = cmd,
+      direction = "float",
+      hidden = true,
+      id = id,
+      display_name = name,
+      close_on_exit = true,
+      dir = vim.fn.expand("%:p:h"),
+    })
+  end
+  term.dir = vim.fn.expand("%:p:h")
+  term:toggle()
+end
+
 local function format_term_desc(term)
   local folder = term.dir and vim.fn.fnamemodify(term.dir, ":p:h:t") or "terminal"
   local name = term.display_name or folder
@@ -106,6 +126,8 @@ return {
       desc = "Kill All Terminals",
       mode = { "n", "t" },
     },
+    { "<leader>gg", function() toggle_subapp(90, "lazygit", "lazygit") end, desc = "Lazygit" },
+    { "<leader>fd", function() toggle_subapp(91, "lazydocker", "lazydocker") end, desc = "Lazydocker" },
     {
       "<leader>fi",
       function()
@@ -138,6 +160,11 @@ return {
     direction = "horizontal",
     persist_size = true,
     close_on_exit = true,
+    on_open = function(term)
+      if term.window and vim.api.nvim_win_is_valid(term.window) then
+        vim.wo[term.window].winfixbuf = true
+      end
+    end,
   },
   config = function(_, opts)
     require("toggleterm").setup(opts)
@@ -161,6 +188,7 @@ return {
         local map_opts = { buffer = event.buf }
         vim.keymap.set("t", "<esc>", [[<C-\><C-n>]], map_opts)
         vim.keymap.set("t", "jk", [[<C-\><C-n>]], map_opts)
+        vim.wo.winfixbuf = true
       end,
     })
   end,
