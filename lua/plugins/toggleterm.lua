@@ -186,7 +186,12 @@ return {
       pattern = "term://*toggleterm#*",
       callback = function(event)
         local map_opts = { buffer = event.buf }
-        vim.keymap.set("t", "<esc>", [[<C-\><C-n>]], map_opts)
+        -- Sub-app floats (lazygit/lazydocker, id >= 90) own <esc>:
+        -- let them handle it; leave terminal mode with jk instead.
+        local id = tonumber(event.match:match("toggleterm#(%d+)"))
+        if not id or id < 90 then
+          vim.keymap.set("t", "<esc>", [[<C-\><C-n>]], map_opts)
+        end
         vim.keymap.set("t", "jk", [[<C-\><C-n>]], map_opts)
         vim.wo.winfixbuf = true
       end,
