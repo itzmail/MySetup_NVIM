@@ -163,6 +163,11 @@ return {
     on_open = function(term)
       if term.window and vim.api.nvim_win_is_valid(term.window) then
         vim.wo[term.window].winfixbuf = true
+        if term.direction == "horizontal" then
+          vim.wo[term.window].winfixheight = true
+        elseif term.direction == "vertical" then
+          vim.wo[term.window].winfixwidth = true
+        end
       end
     end,
   },
@@ -194,6 +199,7 @@ return {
         end
         vim.keymap.set("t", "jk", [[<C-\><C-n>]], map_opts)
         vim.wo.winfixbuf = true
+        vim.wo.winfixheight = true
       end,
     })
   end,
